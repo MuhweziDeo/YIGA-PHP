@@ -16,6 +16,7 @@ class Database
             echo "Connection Error".$exception->getMessage();
 
         }
+
         return $this->conn;
 
     }
