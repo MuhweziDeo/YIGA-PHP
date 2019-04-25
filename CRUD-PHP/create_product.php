@@ -9,7 +9,7 @@ $page_title = "Create Product";
 //headers
 // include database and object files
 include_once 'config/database.php';
-//include_once 'objects/product.php';
+include_once 'objects/product.php';
 include_once 'objects/category.php';
 
 // get database connection
@@ -17,7 +17,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 // pass connection to objects
-//$product = new Product($db);
+$product = new Product($db);
 $category = new Category($db);
 
 
@@ -29,11 +29,30 @@ echo "</div>";
 ?>
 <!-- // content here -->
     <!-- PHP post code will be here -->
+<?php
+// if the form was submitted - PHP OOP CRUD Tutorial
+if($_POST){
+
+    // set product property values
+    $product->name = $_POST['name'];
+    $product->price = $_POST['price'];
+    $product->description = $_POST['description'];
+    $product->category_id = $_POST['category_id'];
+
+    // create the product
+    if($product->create()){
+        echo "<div class='alert alert-success'>Product was created.</div>";
+    }
+
+    // if unable to create the product, tell the user
+    else{
+        echo "<div class='alert alert-danger'>Unable to create product.</div>";
+    }
+}
+?>
 
     <!-- HTML form for creating a product -->
-    <form action="<?php
-    echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    ?>" method="post">
+    <form action="create_product.php" method="post">
 
         <table class='table table-hover table-responsive table-bordered'>
 
@@ -55,7 +74,21 @@ echo "</div>";
             <tr>
                 <td>Category</td>
                 <td>
-                    <!-- categories from database will be here -->
+                    <?php
+                    // read the product categories from the database
+                    $stmt = $category->read();
+
+                    // put them in a select drop-down
+                    echo "<select class='form-control' name='category_id'>";
+                    echo "<option>Select category...</option>";
+
+                    while ($row_category = $stmt->fetch(PDO::FETCH_ASSOC)){
+                        extract($row_category);
+                        echo "<option value='{$id}'>{$name}</option>";
+                    }
+
+                    echo "</select>";
+                    ?>
                 </td>
             </tr>
 

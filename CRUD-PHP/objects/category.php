@@ -14,10 +14,6 @@ class Category{
     }
 
     // used by select drop-down list
-
-    /**
-     * @return mixed
-     */
     function read(){
         //select all data
         $query = "SELECT
