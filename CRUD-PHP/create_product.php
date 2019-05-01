@@ -38,10 +38,16 @@ if($_POST){
     $product->price = $_POST['price'];
     $product->description = $_POST['description'];
     $product->category_id = $_POST['category_id'];
+    $image=!empty($_FILES["image"]["name"])
+        ? sha1_file($_FILES['image']['tmp_name']) . "-" . basename($_FILES["image"]["name"]) : "";
+    $product->image = $image;
 
     // create the product
     if($product->create()){
         echo "<div class='alert alert-success'>Product was created.</div>";
+        // try to upload the submitted file
+        // uploadPhoto() method will return an error message, if any.
+        echo $product->uploadPhoto();
     }
 
     // if unable to create the product, tell the user
@@ -52,9 +58,13 @@ if($_POST){
 ?>
 
     <!-- HTML form for creating a product -->
-    <form action="create_product.php" method="post">
+    <form action="create_product.php" method="post" enctype="multipart/form-data">
 
         <table class='table table-hover table-responsive table-bordered'>
+            <tr>
+                <td>Photo</td>
+                <td><input type="file" name="image" /></td>
+            </tr>
 
             <tr>
                 <td>Name</td>
@@ -70,6 +80,7 @@ if($_POST){
                 <td>Description</td>
                 <td><textarea name='description' class='form-control'></textarea></td>
             </tr>
+
 
             <tr>
                 <td>Category</td>
